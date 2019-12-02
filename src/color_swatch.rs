@@ -24,7 +24,7 @@ pub struct ColorSwatch {
     pub border_radius: Cell<u32>,
     pub text: CloneCell<String>,
     pub text_offset: Cell<Point>,
-    click_callback: RefCell<Option<Arc<Fn(&ColorSwatch, Point)>>>,
+    click_callback: RefCell<Option<Arc<dyn Fn(&ColorSwatch, Point)>>>,
     pressed: Cell<bool>,
     pub visible: Cell<bool>,
     pub id:Cell<usize>,
@@ -110,7 +110,7 @@ impl Widget for ColorSwatch {
         &self.rect
     }
 
-    fn draw(&self, renderer: &mut Renderer, _focused: bool, _theme: &Theme) {
+    fn draw(&self, renderer: &mut dyn Renderer, _focused: bool, _theme: &Theme) {
         if self.visible.get(){
             let rect = self.rect.get();
 
@@ -162,19 +162,16 @@ impl Widget for ColorSwatch {
                             if self.pressed.check_set(true) {
                                 *redraw = true;
                             }
-                        } else {
-                            if self.pressed.check_set(false) {
+                        } else if self.pressed.check_set(false) {
                                 click = true;
                                 *redraw = true;
                             }
-                        }
-                    } else {
-                        if !left_button {
-                            if self.pressed.check_set(false) {
+                        
+                    } else if !left_button && self.pressed.check_set(false) {
                                 *redraw = true;
                             }
-                        }
-                    }
+                        
+                    
 
                     if click {
                         let click_point: Point = point - rect.point();

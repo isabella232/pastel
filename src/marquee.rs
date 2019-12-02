@@ -22,7 +22,7 @@ pub struct Marquee {
     pub border_radius: Cell<u32>,
     pub text: CloneCell<String>,
     pub text_offset: Cell<Point>,
-    click_callback: RefCell<Option<Arc<Fn(&Marquee, Point)>>>,
+    click_callback: RefCell<Option<Arc<dyn Fn(&Marquee, Point)>>>,
     pressed: Cell<bool>,
     pub visible: Cell<bool>,
     pub id:Cell<usize>,
@@ -108,7 +108,7 @@ impl Widget for Marquee {
         &self.rect
     }
 
-    fn draw(&self, renderer: &mut Renderer, _focused: bool, _theme: &Theme) {
+    fn draw(&self, renderer: &mut dyn Renderer, _focused: bool, _theme: &Theme) {
 
 
 
@@ -139,7 +139,7 @@ impl Widget for Marquee {
             }
         }
         /// Draws ant_line - - -   
-        fn ant_line(renderer :&mut Renderer, argx1: i32, argy1: i32, argx2: i32, argy2: i32, color: Color, style: i32) {
+        fn ant_line(renderer :&mut dyn Renderer, argx1: i32, argy1: i32, argx2: i32, argy2: i32, color: Color, style: i32) {
             let mut x = argx1;
             let mut y = argy1;
                     
@@ -185,19 +185,15 @@ impl Widget for Marquee {
                             if self.pressed.check_set(true) {
                                 *redraw = true;
                             }
-                        } else {
-                            if self.pressed.check_set(false) {
+                        } else if self.pressed.check_set(false) {
                                 click = true;
                                 *redraw = true;
                             }
-                        }
-                    } else {
-                        if !left_button {
-                            if self.pressed.check_set(false) {
+                        
+                    } else if !left_button && self.pressed.check_set(false){
                                 *redraw = true;
-                            }
                         }
-                    }
+                    
 
                     if click {
                         let click_point: Point = point - rect.point();

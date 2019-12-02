@@ -41,7 +41,7 @@ use crate::UNDODEPTH;
 use crate::CANVASOFFSET;
 use crate::ZOOMSTEP;
 
-static SMOOTH_BRUSH: &'static [u8; 4242] = include_bytes!("../res/smooth_circle_black.png");
+static SMOOTH_BRUSH: &[u8; 4242] = include_bytes!("../res/smooth_circle_black.png");
 
 pub struct Canvas {
     pub rect: Cell<Rect>,
@@ -55,10 +55,10 @@ pub struct Canvas {
     mask_changed: Cell<bool>,
     mask_return: Cell<bool>,
     pub copy_buffer: RefCell<Image>,
-    click_callback: RefCell<Option<Arc<Fn(&Canvas, Point)>>>,
-    right_click_callback: RefCell<Option<Arc<Fn(&Canvas, Point)>>>,
-    clear_click_callback: RefCell<Option<Arc<Fn(&Canvas, Point)>>>,
-    shortcut_callback: RefCell<Option<Arc<Fn(&Canvas, char)>>>,
+    click_callback: RefCell<Option<Arc<dyn Fn(&Canvas, Point)>>>,
+    right_click_callback: RefCell<Option<Arc<dyn Fn(&Canvas, Point)>>>,
+    clear_click_callback: RefCell<Option<Arc<dyn Fn(&Canvas, Point)>>>,
+    shortcut_callback: RefCell<Option<Arc<dyn Fn(&Canvas, char)>>>,
     pub zoom_factor: Cell<f32>,
     brush: RefCell<Image>,
     old_color: Cell<Color>,
@@ -1249,7 +1249,7 @@ impl Widget for Canvas {
         &self.rect
     }
 
-    fn draw(&self, renderer:  &mut Renderer, _focused: bool, _theme: &Theme) {
+    fn draw(&self, renderer:  &mut dyn Renderer, _focused: bool, _theme: &Theme) {
         let rect = self.rect.get();
         let image = self.image.borrow();
         let mask = self.mask.borrow();
