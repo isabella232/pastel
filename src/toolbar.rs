@@ -82,7 +82,7 @@ impl Toolbar {
 pub struct ToolbarIcon {
     pub rect: Cell<Rect>,
     pub image: RefCell<orbimage::Image>,
-    click_callback: RefCell<Option<Arc<Fn(&ToolbarIcon, Point)>>>,
+    click_callback: RefCell<Option<Arc<dyn Fn(&ToolbarIcon, Point)>>>,
     pub visible: Cell<bool>,
     pub enabled: Cell<bool>,
     pub selected: Cell<bool>,
@@ -177,7 +177,7 @@ impl Widget for ToolbarIcon {
         &self.rect
     }
 
-    fn draw(&self, renderer: &mut Renderer, _focused: bool, _theme: &Theme) {
+    fn draw(&self, renderer: &mut dyn Renderer, _focused: bool, _theme: &Theme) {
         if self.visible.get(){
             let mut rect = self.rect.get();
             let image = self.image.borrow();

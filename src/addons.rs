@@ -442,7 +442,7 @@ impl AddOnsToOrbimage for orbimage::Image {
          let height = buffer.height();
          let x = x;
          let y = y;
-         let data = buffer.clone().into_data(); //&buffer.clone().into_data()
+         let data = buffer.into_data(); //&buffer.clone().into_data()
         'events: loop{
             if w {
                     orbclient.image(x - (width/2) as i32, y + CANVASOFFSET -(height/2) as i32, width, height, &data);
@@ -741,7 +741,7 @@ impl AddOnsToOrbclient for orbclient::Window{
 
 pub trait AddOnsToOrbclientColor {
     fn compare(first_color: Color, second_color: Color, thresold: u8) -> bool;
-    fn eq(&self, other: &Color) -> bool ;
+    fn eq(&self, other: Color) -> bool ;
 }
 
 impl AddOnsToOrbclientColor for orbclient::Color{
@@ -755,7 +755,7 @@ impl AddOnsToOrbclientColor for orbclient::Color{
         r_check < thresold && g_check < thresold && b_check < thresold
     }
 
-    fn eq(&self, other: &Color) -> bool {
+    fn eq(&self, other: Color) -> bool {
         self.r() == other.r() &&
         self.g() == other.g() &&
         self.b() == other.b()

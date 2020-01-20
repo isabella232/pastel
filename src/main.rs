@@ -78,7 +78,13 @@ const ZOOMSTEP: f32 = 0.5;
 
 //default font location
 #[cfg(target_os = "linux")]
-const DEFAULTFONT : &str = "/usr/share/fonts/gnu-free/FreeMonoBold.ttf";
+
+//on Fedora
+//const DEFAULTFONT : &str = "/usr/share/fonts/gnu-free/FreeMonoBold.ttf";
+
+//on Ubuntu
+const DEFAULTFONT : &str = "/usr/share/fonts/truetype/ubuntu/Ubuntu-B.ttf";
+
 #[cfg(target_os = "redox")]
 //const DEFAULTFONT : &str = "/ui/fonts/Mono/Fira/Bold.ttf";
 const DEFAULTFONT : &str = "/ui/pastel/fonts/Pacifico-Regular.ttf";
@@ -388,14 +394,14 @@ fn main() {
     window.add(&fake_text_box);
 
     let tools_clone = tools.clone();
-    let fake_text_box = fake_text_box.clone();
+    //let fake_text_box = fake_text_box.clone();
     text_box.visible(false);
     text_box.position(x+600, y)
         .size(250, 24)
         .text_offset(6, 6)
         //.with_class("red")
         .on_enter(move |text_box: &TextBox| {
-            tools_clone.set("text","Text",text_box.text.get().to_owned());
+            tools_clone.set("text","Text",text_box.text.get());
             //grab focus on fake text box so cursor desaper from text_box after enter
             fake_text_box.grab_focus(true);
 
@@ -1407,7 +1413,7 @@ fn main() {
         let size_bar_clone = size_bar.clone();
         let size_label_clone = size_label.clone();
         let trans_bar_clone = trans_bar.clone();
-        let trans_label_clone = trans_label.clone();
+        //let trans_label_clone = trans_label.clone();
         action.on_click(move |_action: &Action, _point: Point| {
             tools_clone.select("brush");
             status_clone.text("Painting...");
@@ -1418,7 +1424,7 @@ fn main() {
             size_label_clone.text(format!("Size: {}",v));
             let o = tools_clone.get("brush","Opacity").unwrap();
             trans_bar_clone.value.set(o);
-            trans_label_clone.text(format!("Opacity: {}%",o));
+            trans_label.text(format!("Opacity: {}%",o));
             unsafe{(*toolbar2_clone).visible(true);}
         });
         menutools.add(&action);
@@ -1891,7 +1897,7 @@ fn main() {
         let action = Action::new("Info");
         action.on_click(move |_action: &Action, _point: Point| {
             popup("Info",
-                  "Pastel v0.1.2, simple bitmap editor \n for Redox OS by Robby Cerantola");
+                  "Pastel v0.1.3, simple bitmap editor \n for Redox OS by Robby Cerantola");
                         });
         menuhelp.add(&action);
     }
@@ -2276,7 +2282,7 @@ impl FolderItem {
                     Ok(name) => match entry.file_type() {
                         Ok(file_type) => Ok(FolderItem {
                             path: entry.path(),
-                            name: name,
+                            name,
                             dir: file_type.is_dir(),
                         }),
                         Err(err) => Err(format!("{}", err))
